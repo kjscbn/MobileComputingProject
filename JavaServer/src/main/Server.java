@@ -52,8 +52,6 @@ public class Server extends JFrame{
 		server.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		server.setSize(300, 300);
 		server.setVisible(true);
-		
-		
 	}
 	
 	//Server Code
@@ -169,6 +167,7 @@ public class Server extends JFrame{
 			this.score = score;
 		}
 		
+		//Getters and Setters
 		public int getScore() {
 			return this.score;
 		}
