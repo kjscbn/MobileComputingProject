@@ -28,10 +28,11 @@ public class UserChecking {
 		}
 	}
 	
+	//Fills user data in file. Can also be used to update changed data simply by calling again
 	public static void populateUserData(String username, Human human) {
-		FileUtils.writeToFile(username + ".txt", human.getUsername());
-		FileUtils.writeToFile(username + ".txt", human.getCurrentIP());
-		FileUtils.writeToFile(username + ".txt", String.valueOf(human.getScore()));
+		FileUtils.writeToFile(username + ".txt", "Username:" + human.getUsername());
+		FileUtils.writeToFile(username + ".txt", "CurrentIP: " + human.getCurrentIP());
+		FileUtils.writeToFile(username + ".txt", "Score:" + String.valueOf(human.getScore()));
 	}
 	
 	public static Human loadHumanFromFile(String filename) {

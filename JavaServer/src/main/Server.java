@@ -63,8 +63,8 @@ public class Server extends JFrame{
 		System.out.println("Username:" + getUsername());
 		System.out.println("IP: "+  getIP());
 		//Testing Code
-		FileUtils.writeToFile(getUsername() + ".txt", getUsername());
-		FileUtils.writeToFile(getUsername() + ".txt", getIP());
+		FileUtils.writeToFile(getUsername() + ".txt", "Username:" + getUsername());
+		FileUtils.writeToFile(getUsername() + ".txt", "CurrentIP:" + getIP());
 	}
 	
 	//Getters and setters for user information
