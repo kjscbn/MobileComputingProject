@@ -102,6 +102,7 @@ public class Server extends JFrame{
 	            socket.close();
 	            in.close();
 	        }
+			//Catches exceptions
 	        catch(IOException i)
 	        {
 	            System.out.println(i);
