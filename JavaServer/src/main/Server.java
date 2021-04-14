@@ -14,6 +14,7 @@ public class Server extends JFrame{
 	
 	private static String userName;
 	private static String ip;
+	private static int score;
 	
 	/*
 	 * /Creates GUI, buttons, etc....
@@ -89,5 +90,13 @@ public class Server extends JFrame{
 	
 	public static JButton getStopButton() {
 		return stopButton;
+	}
+	
+	public static int getScore() {
+		return score;
+	}
+	
+	public static void setScore(final int scores) {
+		score = scores;
 	}
 }

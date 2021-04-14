@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class UserChecking {
-	public boolean doesUserExist(String username) {
+	public static boolean doesUserExist(String username) {
 		return FileUtils.checkIfFileExists(username);
 	}
 
@@ -17,6 +17,21 @@ public class UserChecking {
 			return false;
 		}
 		return true;
+	}
+	
+	//Creates file for new user.
+	public static void createNewFile(String username) {
+		if(doesUserExist(username) == false) {
+			FileUtils.createFile(username + ".txt");
+		}else {
+			System.out.println("File already exists.");
+		}
+	}
+	
+	public static void populateUserData(String username, Human human) {
+		FileUtils.writeToFile(username + ".txt", human.getUsername());
+		FileUtils.writeToFile(username + ".txt", human.getCurrentIP());
+		FileUtils.writeToFile(username + ".txt", String.valueOf(human.getScore()));
 	}
 	
 	public static Human loadHumanFromFile(String filename) {
@@ -49,6 +64,7 @@ public class UserChecking {
 		return human2;
 	}
 	
+	//Formula for calculating score, subject to change
 	public int calculateScore(int currentScore, int timeConnectedToCurrentIP) {
 		return currentScore * timeConnectedToCurrentIP;
 	}
