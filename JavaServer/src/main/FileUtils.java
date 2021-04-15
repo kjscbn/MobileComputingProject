@@ -85,4 +85,8 @@ public class FileUtils {
 		
 		return score;
 	}
+	
+	public static void writeScoreToFile(String filename, String ip, int score) {
+		writeToFile(filename, ip + String.valueOf(score));
+	}
 }
