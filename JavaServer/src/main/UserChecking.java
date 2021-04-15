@@ -93,7 +93,7 @@ public class UserChecking {
 	}
 
 	// Formula for calculating score, subject to change
-	public int calculateScore(int currentScore, int timeConnectedToCurrentIP) {
-		return currentScore * timeConnectedToCurrentIP;
+	public int calculateScore(String ip, int currentScore) {
+		return FileUtils.checkScoreForIP(ip) + 1;
 	}
 }
