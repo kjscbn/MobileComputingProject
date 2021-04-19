@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Android Data Service</string>
+    <string name="placeholder_host">Remote host</string>
+    <string name="placeholder_port">Port</string>
+    <string name="button_get_score">Get My Score</string>
+    <string name="button_send_location">Send Location Data</string>
+</resources>
