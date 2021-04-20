@@ -14,13 +14,13 @@ var server = net.Server();
 server.listen({port: 9999});
 
 server.on("connection", client => {
-	client.setEncoding('ascii');
+  client.setEncoding('ascii');
 
   var inBuf = "";
 
   // got some data
-	client.on("data", data => {
-	  inBuf += data;
+  client.on("data", data => {
+    inBuf += data;
 
     // if we got an "EOT" character (0x04) that's the end of the message
     if(inBuf.charCodeAt(inBuf.length - 1) == 4) {
@@ -79,5 +79,5 @@ server.on("connection", client => {
 
       client.end();
     }
-	});
+  });
 });
