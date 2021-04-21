@@ -39,21 +39,24 @@ server.on("connection", client => {
         else {
           switch(request.actType) {
             case 'REQ':
-              console.log('request');
+              console.log("Score request received:");
               score = 99
               break;
             case 'GEO':
-              console.log('location');
+              console.log("Geolocation data received:");
               score = 79
               break;
             case 'WEB':
-              console.log('web');
+              console.log("Website lookup received:");
               score = 89
               break;
             default:
               errText = "invalid request, unknown actType";
           }
         }
+
+        console.log(JSON.stringify(request, null, 2));
+        console.log();
 
         var response;
 
