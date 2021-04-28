@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // send a JSON object to the Score Server and return the result
-    
+
     // TODO multiple sequential requests seem to garble data, not sure if its netcat or this code
     private JSONObject sendData(JSONObject requestJSON) {
         Socket sock = new Socket();
@@ -158,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
                 if(hostnameString != null && !hostnameString.trim().isEmpty()) {
                     SERVER_HOST = hostnameString.trim();
                 }
+            }
+            else {
+              SERVER_HOST="hopefullyhuman.com"; // default
             }
 
             if(SERVER_HOST == null) {
@@ -190,7 +193,9 @@ public class MainActivity extends AppCompatActivity {
 
             DataOutputStream out = new DataOutputStream(sock.getOutputStream());
 
-            out.writeChars(requestJSON.toString());
+            out.writeBytes(requestJSON.toString());
+            out.writeByte(4);
+
             out.flush();
 
             InputStream in = sock.getInputStream();
@@ -250,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject requestJSON = new JSONObject();
 
+                // just hardcode it for now
                 requestJSON.put("subjectIP", "199.88.77.66");
                 requestJSON.put("actType", "REQ");
 
