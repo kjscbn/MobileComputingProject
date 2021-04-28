@@ -12,122 +12,167 @@ import org.json.JSONException;
 import workingserver.MessageUtil;
 
 public class Server {
-  // Port number and Server Socket
-  public static final int port = 4444;
-  private ServerSocket ss = null;
+	// Port number and Server Socket
+	public static final int port = 4447;
+	private ServerSocket ss = null;
 
-  // Method to run server
-  public void runServer() throws IOException, ClassNotFoundException {
-    // Declare server socket with specified port number.
-    ss = new ServerSocket(port);
+	// Method to run server
+	public void runServer() throws IOException, ClassNotFoundException {
+		// Declare server socket with specified port number.
+		ss = new ServerSocket(port);
 
-    while(true) {
-      System.out.println("Waiting for connections ...");
+		while (true) {
+			System.out.println("Waiting for connections ...");
 
-      // Socket accepts connection
-      // TODO spawn a new thread to handle each connection
-      Socket socket = ss.accept();
-      DataOutputStream os = new DataOutputStream(socket.getOutputStream());
-      DataInputStream is = new DataInputStream(socket.getInputStream());
+			// Socket accepts connection
+			// TODO spawn a new thread to handle each connection
+			Socket socket = ss.accept();
+			DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+			DataInputStream is = new DataInputStream(socket.getInputStream());
 
-      // JSONObject is read as a string
-      String m = MessageUtil.readRequest(is);
-      System.out.println("message received: " + m);
-      // Converted back to JSONObject
-      try {
-        JSONObject jsonObject = new JSONObject(m);
-        // Method to check and edit JSONObject
-        doSomething(jsonObject);
-        // Convert back to string to send back to client
-        String sendBack = jsonObject.toString();
-        // Sends string back to client
-        MessageUtil.writeResponse(os, sendBack);
-        System.out.println("message sent: " + sendBack);
-        // Close socket
-      }
-      catch (JSONException e) {
-        System.out.println("Error parsing JSON");
-      }
+			// JSONObject is read as a string
+			String m = MessageUtil.readRequest(is);
+			System.out.println("message received: " + m);
+			// Converted back to JSONObject
+			try {
+				JSONObject jsonObject = new JSONObject(m);
+				// Method to check and edit JSONObject
+				doSomething(jsonObject);
+				// Convert back to string to send back to client
+				String sendBack = jsonObject.toString();
+				// Sends string back to client
+				MessageUtil.writeResponse(os, sendBack);
+				System.out.println("message sent: " + sendBack);
+				// Close socket
+			} catch (JSONException e) {
+				System.out.println("Error parsing JSON");
+			}
 
-      socket.close();
-    }
-  }
+			socket.close();
+		}
+	}
 
-  // Method that runs after connection is made and string is received.
-  private void doSomething(JSONObject m) {
-    if (checkJSONObject(m) == false) {
-      fixJSONObject(m);
-    }
+	// Method that runs after connection is made and string is received.
+	private void doSomething(JSONObject m) {
+		/*
+		 * if (checkJSONObject(m) == false) { fixJSONObject(m); }
+		 */
+		String actType = JSONFunctions.getACTType(m);
 
-    editScore(m);
-  }
+		//Switch to process different requests
+		switch (actType) {
+		case "REQ":
+			//Gets subject token and score from client message, calcs new score, and creates response
+			String subjectToken = JSONFunctions.getSubjectIP(m);
+			String score = JSONFunctions.getScore(m);
+			m = JSONFunctions.createReturnMessage(m, subjectToken, score);
+			editScore(m);
+			break;
+		case "GEO":
+			//Gets GEO data, and for now prints it out, sends original message back
+			JSONObject data = m.getJSONObject("actData");
+			
+			String latitude = "";
+			String longitude = "";
+			String accuracy = "";
+			latitude = JSONFunctions.getLatitude(data);
+			longitude = JSONFunctions.getLongitude(data);
+			accuracy = JSONFunctions.getAccuracy(data);
+			
+			System.out.println("LATITUDE: " + latitude);
+			System.out.println("LONGITUDE: " + longitude);
+			System.out.println("ACCURACY: " + accuracy);
+			break;
+		case "WEB":
+			//Gets WEB data, and for now prints it out, sends original message back
+			JSONObject webData = m.getJSONObject("actData");
+			
+			String url = "";
+			String userAgent = "";
+			
+			url = JSONFunctions.getURL(webData);
+			userAgent = JSONFunctions.getUserAgent(webData);
+			
+			System.out.println("URL: " + url);
+			System.out.println("userAgent: " + userAgent);
+			break;
+		default:
+			break;
+		}
 
-  // Main method
-  public static void main(String[] args) throws ClassNotFoundException, IOException {
-    new Server().runServer();
-  }
+		// editScore(m);
+	}
 
-  // Checks JSONObject to make sure needed fields are there.
-  public boolean checkJSONObject(JSONObject obj) {
-    boolean valid = true;
+	// Main method
+	public static void main(String[] args) throws ClassNotFoundException, IOException {
+		new Server().runServer();
+	}
 
-    if (obj.has("ip") == false) {
-      valid = false;
-    }
+	// Checks JSONObject to make sure needed fields are there.
+	public boolean checkJSONObject(JSONObject obj) {
+		boolean valid = true;
 
-    if (obj.has("score") == false) {
-      valid = false;
-    }
+		if (obj.has("ip") == false) {
+			valid = false;
+		}
 
-    return valid;
-  }
+		if (obj.has("score") == false) {
+			valid = false;
+		}
 
-  // Adds missing values to JSONObject if need be. Default values can be
-  // specified.
-  public void fixJSONObject(JSONObject obj) {
-    try {
-      if (obj.has("ip") == false) {
-        obj.put("ip", "");
-      }
-      if (obj.has("score") == false) {
-        obj.put("score", new Integer(0));
-      }
-    }
-    catch(JSONException e) {
-      System.out.println(e);
-    }
-  }
+		return valid;
+	}
 
-  /*
-   * Edit score in JSONObject. Works by storing in temp value. Removing field from
-   * JSONObject, edit value, then add it back.
-   */
-  public void editScore(JSONObject obj) {
-    try {
-      int temp = Integer.valueOf((String) obj.get("score"));
+	// Adds missing values to JSONObject if need be. Default values can be
+	// specified.
+	public void fixJSONObject(JSONObject obj) {
+		try {
+			if (obj.has("ip") == false) {
+				obj.put("ip", "");
+			}
+			if (obj.has("score") == false) {
+				obj.put("score", new Integer(0));
+			}
+		} catch (JSONException e) {
+			System.out.println(e);
+		}
+	}
 
-      temp = temp + 1;
-      obj.remove("score");
-      obj.put("score", temp);
-    }
-    catch(JSONException e) {
-      System.out.println(e);
-    }
-  }
+	/*
+	 * Edit score in JSONObject. Works by storing in temp value. Removing field from
+	 * JSONObject, edit value, then add it back.
+	 */
+	public void editScore(JSONObject obj) {
+		try {
+			double temp = Double.valueOf((String) obj.get("score"));
 
-  /*
-   * Edit score in JSONObject. Works by storing in temp value. Removing field from
-   * JSONObject, edit value, then add it back.
-   */
-  public void editIP(JSONObject obj, String newIP) {
-    try {
-      String temp = (String) obj.get("ip");
-      temp = newIP;
-      obj.remove("ip");
-      obj.put("ip", temp);
-    }
-    catch(JSONException e) {
-      System.out.println(e);
-    }
-  }
+			System.out.println("Current Score: " + temp);
+			
+			//Temp value just to check score formula.
+			double locationValue = 5;
+			temp = temp + locationValue*((100 - temp) / 200);
+			
+			System.out.println("New Score: " + temp);
+			
+			obj.remove("score");
+			obj.put("score", temp);
+		} catch (JSONException e) {
+			System.out.println(e);
+		}
+	}
+
+	/*
+	 * Edit score in JSONObject. Works by storing in temp value. Removing field from
+	 * JSONObject, edit value, then add it back.
+	 */
+	public void editIP(JSONObject obj, String newIP) {
+		try {
+			String temp = (String) obj.get("ip");
+			temp = newIP;
+			obj.remove("ip");
+			obj.put("ip", temp);
+		} catch (JSONException e) {
+			System.out.println(e);
+		}
+	}
 }
