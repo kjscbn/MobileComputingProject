@@ -57,48 +57,53 @@ public class Server {
 		/*
 		 * if (checkJSONObject(m) == false) { fixJSONObject(m); }
 		 */
-		String actType = JSONFunctions.getACTType(m);
+    try {
+      String actType = JSONFunctions.getACTType(m);
+      String subjectToken = JSONFunctions.getSubjectToken(m);
 
-		//Switch to process different requests
-		switch (actType) {
-		case "REQ":
-			//Gets subject token and score from client message, calcs new score, and creates response
-			String subjectToken = JSONFunctions.getSubjectIP(m);
-			String score = JSONFunctions.getScore(m);
-			m = JSONFunctions.createReturnMessage(m, subjectToken, score);
-			editScore(m);
-			break;
-		case "GEO":
-			//Gets GEO data, and for now prints it out, sends original message back
-			JSONObject data = m.getJSONObject("actData");
-			
-			String latitude = "";
-			String longitude = "";
-			String accuracy = "";
-			latitude = JSONFunctions.getLatitude(data);
-			longitude = JSONFunctions.getLongitude(data);
-			accuracy = JSONFunctions.getAccuracy(data);
-			
-			System.out.println("LATITUDE: " + latitude);
-			System.out.println("LONGITUDE: " + longitude);
-			System.out.println("ACCURACY: " + accuracy);
-			break;
-		case "WEB":
-			//Gets WEB data, and for now prints it out, sends original message back
-			JSONObject webData = m.getJSONObject("actData");
-			
-			String url = "";
-			String userAgent = "";
-			
-			url = JSONFunctions.getURL(webData);
-			userAgent = JSONFunctions.getUserAgent(webData);
-			
-			System.out.println("URL: " + url);
-			System.out.println("userAgent: " + userAgent);
-			break;
-		default:
-			break;
-		}
+      // for now just return subject Token and 7
+      m.clear();
+      JSONFunctions.createReturnMessage(m, subjectToken, "7");
+
+      //Switch to process different requests
+      switch (actType) {
+      case "REQ":
+        //Gets subject token and score from client message, calcs new score, and creates response
+        // editScore(m);
+        break;
+      case "GEO":
+        //Gets GEO data, and for now prints it out, sends original message back
+        JSONObject data = m.getJSONObject("actData");
+        String latitude = "";
+        String longitude = "";
+        String accuracy = "";
+        latitude = JSONFunctions.getLatitude(data);
+        longitude = JSONFunctions.getLongitude(data);
+        accuracy = JSONFunctions.getAccuracy(data);
+
+        System.out.println("LATITUDE: " + latitude);
+        System.out.println("LONGITUDE: " + longitude);
+        System.out.println("ACCURACY: " + accuracy);
+        break;
+      case "WEB":
+        //Gets WEB data, and for now prints it out, sends original message back
+        JSONObject webData = m.getJSONObject("actData");
+        
+        String url = "";
+        String userAgent = "";
+        
+        url = JSONFunctions.getURL(webData);
+        userAgent = JSONFunctions.getUserAgent(webData);
+        
+        System.out.println("URL: " + url);
+        System.out.println("userAgent: " + userAgent);
+        break;
+      default:
+        break;
+      }
+    } catch (JSONException e) {
+      System.out.println("Error parsing JSON");
+    }
 
 		// editScore(m);
 	}
