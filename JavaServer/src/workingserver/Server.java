@@ -82,6 +82,11 @@ public class Server {
 			System.out.println("LATITUDE: " + latitude);
 			System.out.println("LONGITUDE: " + longitude);
 			System.out.println("ACCURACY: " + accuracy);
+			//Gets subject token and score from client message, calcs new score, and creates response
+			String subjectToken2 = JSONFunctions.getSubjectIP(m);
+			String score2 = JSONFunctions.getScore(m);
+			m = JSONFunctions.createReturnMessage(m, subjectToken2, score2);
+			editScore(m);
 			break;
 		case "WEB":
 			//Gets WEB data, and for now prints it out, sends original message back
@@ -95,6 +100,11 @@ public class Server {
 			
 			System.out.println("URL: " + url);
 			System.out.println("userAgent: " + userAgent);
+			//Gets subject token and score from client message, calcs new score, and creates response
+			String subjectToken3 = JSONFunctions.getSubjectIP(m);
+			String score3 = JSONFunctions.getScore(m);
+			m = JSONFunctions.createReturnMessage(m, subjectToken3, score3);
+			editScore(m);
 			break;
 		default:
 			break;
