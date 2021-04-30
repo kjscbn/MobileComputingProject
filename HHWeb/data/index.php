@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Good News Today!</title>
-<style>
+  <title>Good News Today!</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <style>
     body {
-        width: 35em;
-        margin: 0 auto;
-        font-family: Tahoma, Verdana, Arial, sans-serif;
+      width: 35em;
+      margin: 0 auto;
+      font-family: Tahoma, Verdana, Arial, sans-serif;
     }
-</style>
+  </style>
 </head>
 <body>
 <?php
@@ -48,10 +49,10 @@
   }
 ?>
 
-<?php if($score > 10) : ?>
+<?php if($score > 5) : ?>
 <h1>Your good news for today!</h1>
 
-<p>This is some great news that you didn't know about until you read it just nw!
+<p>This is some great news that you didn't know about until you read it just now!
 <?php else : ?>
 <h1>Bad News!</h1>
 
