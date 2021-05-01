@@ -96,7 +96,7 @@ public class JSONFunctions {
 	public static String getScore(JSONObject obj) {
 		String score = "";
 		
-		score = new String((String) obj.get("score"));
+		score = new String(obj.get("score").toString());
 		
 		return score;
 	}

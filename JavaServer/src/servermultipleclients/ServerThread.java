@@ -24,6 +24,7 @@ public class ServerThread extends Thread {
 	//Index 0 is latitude, index 1 is longitude, index 2 is accuracy, index 3 is time
 	static String oldLocationData[] = new String[4];
 	static int locationValue = 1;
+	static int oldScore = 0;
 
 	// Constructor for Server Thread. Gets needed objects from Server
 	public ServerThread(Socket socket, DataOutputStream os, DataInputStream is) {
@@ -117,26 +118,36 @@ public class ServerThread extends Thread {
 				double curLon = Double.valueOf(longitude);
 				
 				double distance = distance(curLat, curLon, oldLat, oldLon, 'M');
-				double time = getTimeDifference(oldLocationData[2], getCurrentTimeStamp());
+				double time = getTimeDifference(oldLocationData[3], getCurrentTimeStamp());
 				speed = calcSpeed(distance, time);
-				FileUtils.writeToFile(filename, latitude + "," + longitude + "," + accuracy+","+getCurrentTimeStamp());
+				FileUtils.writeToFile(filename, latitude + "," + longitude + "," + accuracy+","+getCurrentTimeStamp()+score2);
+				
+				//Edits location value based on speed. Slower speed is more human like so higher location value.
+				if(speed >= 0 && speed <= 33) {
+					locationValue = 9;
+				}else if(speed >= 34 && speed <= 66) {
+					locationValue = 6;
+				}else if(speed >= 67 && speed < 100) {
+					locationValue = 3;
+				}
+				
+				//Creates return message
+				m = JSONFunctions.createReturnMessage(m, subjectToken2, score2);
+				editScore(m);
+				//Write data again with new score.
+				String newScore = JSONFunctions.getScore(m);
+				FileUtils.writeToFile(filename, latitude + "," + longitude + "," + accuracy+","+getCurrentTimeStamp()+newScore);
 			}else {
 				FileUtils.createFile(filename);
-				FileUtils.writeToFile(filename, latitude + "," + longitude + "," + accuracy+","+getCurrentTimeStamp());
+				FileUtils.writeToFile(filename, latitude + "," + longitude + "," + accuracy+","+getCurrentTimeStamp()+score2);
+				
+				//Creates return message
+				m = JSONFunctions.createReturnMessage(m, subjectToken2, score2);
+				editScore(m);
+				//Write data again with new score
+				String newScore = JSONFunctions.getScore(m);
+				FileUtils.writeToFile(filename, latitude + "," + longitude + "," + accuracy+","+getCurrentTimeStamp()+newScore);
 			}
-
-			//Edits location value based on speed. Slower speed is more human like so higher location value.
-			if(speed >= 0 && speed <= 33) {
-				locationValue = 9;
-			}else if(speed >= 34 && speed <= 66) {
-				locationValue = 6;
-			}else if(speed >= 67 && speed < 100) {
-				locationValue = 3;
-			}
-			
-			//Creates return message
-			m = JSONFunctions.createReturnMessage(m, subjectToken2, score2);
-			editScore(m);
 			break;
 		case "WEB":
 			// Gets WEB data, and for now prints it out, sends original message back
@@ -197,6 +208,12 @@ public class ServerThread extends Thread {
 		} catch (JSONException e) {
 			System.out.println(e);
 		}
+	}
+	
+	double calcScore() {
+		double score = 0;
+		
+		return score;
 	}
 
 	//Calculates distance between two points using longitude and latitude. Leave unit as M for miles.

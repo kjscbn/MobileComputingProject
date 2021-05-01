@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-	public static final int port = 6666;
+	public static final int port = 7777;
 	private ServerSocket ss = null;
 	
 	public void runServer() throws IOException, ClassNotFoundException {
