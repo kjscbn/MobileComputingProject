@@ -80,6 +80,8 @@ public class Server {
 			longitude = JSONFunctions.getLongitude(data);
 			accuracy = JSONFunctions.getAccuracy(data);
 			
+			
+			
 			System.out.println("LATITUDE: " + latitude);
 			System.out.println("LONGITUDE: " + longitude);
 			System.out.println("ACCURACY: " + accuracy);
