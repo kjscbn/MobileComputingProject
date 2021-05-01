@@ -7,27 +7,14 @@
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/etPort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:hint="@string/placeholder_port"
-        android:inputType="number"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etHost" />
-
-    <EditText
         android:id="@+id/etHost"
         android:layout_width="323dp"
         android:layout_height="44dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
-        android:hint="@string/placeholder_host"
+        android:hint="My Token"
         android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -38,10 +25,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="28dp"
         android:text="@string/button_get_score"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etPort" />
+        app:layout_constraintTop_toBottomOf="@+id/etHost" />
 
     <Button
         android:id="@+id/btnSendLocation"
@@ -50,7 +37,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="16dp"
-        android:text="@string/button_send_location"
+        android:text="Read News"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnGetScore" />
 
@@ -80,7 +67,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="220dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="20dp"

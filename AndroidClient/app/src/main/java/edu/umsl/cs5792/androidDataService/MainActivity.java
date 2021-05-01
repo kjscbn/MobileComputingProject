@@ -31,6 +31,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -40,13 +43,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int SO_TIMEOUT = 60 * 1000; // 60 second timeout
 
     Thread getScoreThread, disconnectThread, sendLocationThread;
-    EditText etHost, etPort;
+    EditText etHost;
     TextView tvConnectMsg, tvSendMsg, tvDetailMsg;
     WebView webView;
+    Map<String, String> extraHeaders = new HashMap<String, String>();
+
     Button btnGetScore, btnSendLocation;
 
-    String SERVER_HOST;
-    int SERVER_PORT;
+    String SERVER_HOST = "hopefullyhuman.com";
+    int SERVER_PORT = 4447;
 
     private DataOutputStream out;
     Uri uri = null;
@@ -88,11 +93,12 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         // webView.setScrollContainer(false);
-        // webView.loadUrl("http://www.hopefullyhuman.com/data?subjectToken=steven");
-        webView.loadUrl("http://www.hopefullyhuman.com/");
+        extraHeaders.put("SUBJECTTOKEN", "steven");
+
+        webView.loadUrl("http://www.hopefullyhuman.com/data", extraHeaders);
+        // webView.loadUrl("http://www.hopefullyhuman.com/");
 
         etHost = findViewById(R.id.etHost);
-        etPort = findViewById(R.id.etPort);
 
         btnGetScore = findViewById(R.id.btnGetScore);
         btnSendLocation = findViewById(R.id.btnSendLocation);
@@ -155,49 +161,7 @@ public class MainActivity extends AppCompatActivity {
         String lastError;
 
         try {
-            // reset host and port in case they've been edited
-            SERVER_HOST = null;
-            SERVER_PORT = -1;
-
             setStatusMessage(tvConnectMsg, "Connecting...");
-            setStatusMessage(tvSendMsg, "");  // clear old messages
-            setStatusMessage(tvDetailMsg, "");  // clear old messages
-
-            Editable etHostname = etHost.getText();
-
-            if(etHostname != null) {
-                String hostnameString = etHostname.toString();
-                if(hostnameString != null && !hostnameString.trim().isEmpty()) {
-                    SERVER_HOST = hostnameString.trim();
-                }
-            }
-            else {
-              SERVER_HOST="hopefullyhuman.com"; // default
-            }
-
-            if(SERVER_HOST == null) {
-                setStatusMessage(tvConnectMsg, "Invalid host name");
-
-                return responseJSON;
-            }
-            else {
-                Editable etPortnum = etPort.getText();
-
-                if (etPortnum != null) {
-                    String portString = etPortnum.toString();
-
-                    if (portString != null && !portString.trim().isEmpty()) {
-                        SERVER_PORT = Integer.parseInt(portString);
-                    }
-                }
-
-                if (SERVER_PORT < 0) {
-                    setStatusMessage(tvConnectMsg, "Invalid host port");
-
-                    return responseJSON;
-                }
-            }
-
             sock.connect(new InetSocketAddress(SERVER_HOST, SERVER_PORT), SO_TIMEOUT);
 
             // set 10 second read/write timeout
@@ -274,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject responseJSON = sendData(requestJSON);
 
                 double score = responseJSON.getDouble("score");
+
                 setStatusMessage(tvConnectMsg, String.valueOf(score));
             }
             catch (JSONException e) {
@@ -305,6 +270,13 @@ public class MainActivity extends AppCompatActivity {
 
                 double score = responseJSON.getDouble("score");
                 setStatusMessage(tvConnectMsg, String.valueOf(score));
+
+                webView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.loadUrl("http://www.hopefullyhuman.com/data", extraHeaders);
+                    }
+                });
             }
             catch (JSONException e) {
                 Log.e(TAG, e.toString());
@@ -328,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
 
             double connectTime = (connectEndTime.getTime() - connectStartTime.getTime()) / 1000.;
 
-            setStatusMessage(tvDetailMsg, "Connection ended after " + connectTime + " seconds");
             setStatusMessage(tvConnectMsg, "Disconnected");
         }
     }
