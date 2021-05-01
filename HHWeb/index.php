@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Welcome to Hopefully Human!</title>
+<meta name="viewport" content="width=device-width" />
 <style>
     body {
         width: 35em;
@@ -20,7 +21,7 @@
   echo "<p>Your IP is $ip</p>";
 
   $host = "localhost";
-  $port = 9999;
+  $port = 4447;
 
   $sock = socket_create(AF_INET, SOCK_STREAM, 0);
 	$rc = socket_connect($sock, $host, $port);
