@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnGetScore, btnSendLocation;
 
-    String SERVER_HOST = "hopefullyhuman.com";
-    int SERVER_PORT = 4447;
+    // String SERVER_HOST = "hopefullyhuman.com";
+    String SERVER_HOST = "192.168.1.74";
+    int SERVER_PORT = 7777;
 
     private DataOutputStream out;
     Uri uri = null;
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         // webView.setScrollContainer(false);
-        extraHeaders.put("SUBJECTTOKEN", "steven");
+        extraHeaders.put("SUBJECTTOKEN", "bob");
 
         webView.loadUrl("http://www.hopefullyhuman.com/data", extraHeaders);
         // webView.loadUrl("http://www.hopefullyhuman.com/");
@@ -234,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 // just hardcode it for now
                 requestJSON.put("subjectIP", "199.88.77.66");
                 requestJSON.put("actType", "REQ");
+                requestJSON.put("subjectToken", "bob");
 
                 JSONObject responseJSON = sendData(requestJSON);
 
@@ -265,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
                 locationJSON.put("longitude", location.getLongitude());
                 locationJSON.put("latitude", location.getLatitude());
                 locationJSON.put("accuracy", location.getAccuracy());
-
+// TODO fix this - needs to be nested under actData
                 JSONObject responseJSON = sendData(locationJSON);
 
                 double score = responseJSON.getDouble("score");

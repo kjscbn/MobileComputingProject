@@ -258,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
                 // just hardcode it for now
                 requestJSON.put("subjectIP", "199.88.77.66");
                 requestJSON.put("actType", "REQ");
+                requestJSON.put("subjectToken", "bob");
+
 
                 JSONObject responseJSON = sendData(requestJSON);
 
@@ -282,14 +284,20 @@ public class MainActivity extends AppCompatActivity {
 
         public void run() {
             try {
+                JSONObject requestJSON = new JSONObject();
+
+                requestJSON.put("actType", "GEO");
+                requestJSON.put("subjectIP", "99.99.99.99");
+                requestJSON.put("subjectToken", "bob");
+
                 JSONObject locationJSON = new JSONObject();
+                locationJSON.put("longitude", location.getLongitude() + "");
+                locationJSON.put("latitude", location.getLatitude() + "");
+                locationJSON.put("accuracy", location.getAccuracy() + "");
 
-                locationJSON.put("actType", "GEO");
-                locationJSON.put("longitude", location.getLongitude());
-                locationJSON.put("latitude", location.getLatitude());
-                locationJSON.put("accuracy", location.getAccuracy());
+                requestJSON.put("actData", locationJSON);
 
-                JSONObject responseJSON = sendData(locationJSON);
+                JSONObject responseJSON = sendData(requestJSON);
 
                 double score = responseJSON.getDouble("score");
                 setStatusMessage(tvConnectMsg, String.valueOf(score));
