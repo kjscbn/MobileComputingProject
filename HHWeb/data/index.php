@@ -49,7 +49,7 @@
   }
 ?>
 
-<?php if($score > 5) : ?>
+<?php if($score >= 0) : ?>
 <h1>Your good news for today!</h1>
 
 <p>This is some great news that you didn't know about until you read it just now!
