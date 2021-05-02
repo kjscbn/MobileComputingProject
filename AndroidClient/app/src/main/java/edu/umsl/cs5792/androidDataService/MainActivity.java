@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -42,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int OPEN_FILE_STREAM = 2;
     private static final int SO_TIMEOUT = 60 * 1000; // 60 second timeout
 
-    Thread getScoreThread, disconnectThread, sendLocationThread;
-    EditText etHost;
+    Thread getScoreThread, sendLocationThread;
+    EditText etToken;
     TextView tvConnectMsg, tvSendMsg, tvDetailMsg;
     WebView webView;
     Map<String, String> extraHeaders = new HashMap<String, String>();
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnGetScore, btnSendLocation;
 
     // String SERVER_HOST = "hopefullyhuman.com";
-    String SERVER_HOST = "192.168.1.74";
+    String SERVER_HOST = "hopefullyhuman.com";
     int SERVER_PORT = 7777;
 
     private DataOutputStream out;
@@ -87,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
         tvConnectMsg = findViewById(R.id.tvConnectMsg);
         tvSendMsg = findViewById(R.id.tvSendMsg);
         tvDetailMsg = findViewById(R.id.tvDetailMsg);
+
+        etToken = findViewById(R.id.etToken);
+
         webView = findViewById(R.id.webview);
         webView.setWebViewClient(new WebViewClient());
         // webView.setPadding(10, 0, 10, 0);
@@ -94,12 +96,10 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         // webView.setScrollContainer(false);
-        extraHeaders.put("SUBJECTTOKEN", "bob");
+        extraHeaders.put("SUBJECTTOKEN", getSubjectToken());
 
         webView.loadUrl("http://www.hopefullyhuman.com/data", extraHeaders);
         // webView.loadUrl("http://www.hopefullyhuman.com/");
-
-        etHost = findViewById(R.id.etHost);
 
         btnGetScore = findViewById(R.id.btnGetScore);
         btnSendLocation = findViewById(R.id.btnSendLocation);
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 // Got last known location. In some rare situations this can be null.
                                 if (location != null) {
-                                    sendLocationThread = new Thread(new SendLocationThread(location));
+                                    sendLocationThread = new Thread(new refreshBrowser(location));
                                     sendLocationThread.start();
                                 }
                             }
@@ -153,8 +153,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // send a JSON object to the Score Server and return the result
+    private String getSubjectToken() {
+        Editable etSubjectToken = etToken.getText();
+        String subjectToken = "DefaultToken";
 
+        if(etSubjectToken != null) {
+            String subjectTokenString = etSubjectToken.toString();
+
+            if(subjectTokenString != null && !subjectTokenString.trim().isEmpty()) {
+               subjectToken = subjectTokenString.trim();
+            }
+        }
+
+        return subjectToken;
+    }
+
+    // send a JSON object to the Score Server and return the result
     // TODO multiple sequential requests seem to garble data, not sure if its netcat or this code
     private JSONObject sendData(JSONObject requestJSON) {
         Socket sock = new Socket();
@@ -233,9 +247,8 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject requestJSON = new JSONObject();
 
                 // just hardcode it for now
-                requestJSON.put("subjectIP", "199.88.77.66");
                 requestJSON.put("actType", "REQ");
-                requestJSON.put("subjectToken", "bob");
+                requestJSON.put("subjectToken", getSubjectToken());
 
                 JSONObject responseJSON = sendData(requestJSON);
 
@@ -252,30 +265,32 @@ public class MainActivity extends AppCompatActivity {
     }
   
     // write location data to server
-    class SendLocationThread implements Runnable {
+    class refreshBrowser implements Runnable {
         Location location;
 
-        public SendLocationThread(Location l) {
+        public refreshBrowser(Location l) {
             location = l;
         }
 
         public void run() {
             try {
-                JSONObject locationJSON = new JSONObject();
+                JSONObject requestJSON = new JSONObject();
 
-                locationJSON.put("actType", "GEO");
-                locationJSON.put("longitude", location.getLongitude());
-                locationJSON.put("latitude", location.getLatitude());
-                locationJSON.put("accuracy", location.getAccuracy());
-// TODO fix this - needs to be nested under actData
-                JSONObject responseJSON = sendData(locationJSON);
+                // just hardcode it for now
+                requestJSON.put("actType", "REQ");
+                requestJSON.put("subjectToken", getSubjectToken());
+
+                JSONObject responseJSON = sendData(requestJSON);
 
                 double score = responseJSON.getDouble("score");
+
                 setStatusMessage(tvConnectMsg, String.valueOf(score));
 
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
+                        extraHeaders.put("SUBJECTTOKEN", getSubjectToken());
+
                         webView.loadUrl("http://www.hopefullyhuman.com/data", extraHeaders);
                     }
                 });

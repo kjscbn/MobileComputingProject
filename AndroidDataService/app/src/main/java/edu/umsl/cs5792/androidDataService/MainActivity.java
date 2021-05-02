@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int SO_TIMEOUT = 60 * 1000; // 60 second timeout
 
     Thread getScoreThread, disconnectThread, sendLocationThread;
-    EditText etHost, etPort;
-    TextView tvConnectMsg, tvSendMsg, tvDetailMsg;
+    EditText etHost, etPort, etToken;
+    TextView tvConnectMsg, tvSendMsg;
     Button btnGetScore, btnSendLocation;
 
     String SERVER_HOST;
@@ -77,10 +77,14 @@ public class MainActivity extends AppCompatActivity {
         // get our view handles
         tvConnectMsg = findViewById(R.id.tvConnectMsg);
         tvSendMsg = findViewById(R.id.tvSendMsg);
-        tvDetailMsg = findViewById(R.id.tvDetailMsg);
 
         etHost = findViewById(R.id.etHost);
+        etHost.setText("hopefullyhuman.com");
+
         etPort = findViewById(R.id.etPort);
+        etPort.setText("7777");
+
+        etToken = findViewById(R.id.etToken);
 
         btnGetScore = findViewById(R.id.btnGetScore);
         btnSendLocation = findViewById(R.id.btnSendLocation);
@@ -149,7 +153,17 @@ public class MainActivity extends AppCompatActivity {
 
             setStatusMessage(tvConnectMsg, "Connecting...");
             setStatusMessage(tvSendMsg, "");  // clear old messages
-            setStatusMessage(tvDetailMsg, "");  // clear old messages
+
+            Editable etTokenData = etToken.getText();
+            String token = "Default Token";
+            if(etTokenData != null) {
+                String tokenString = etTokenData.toString();
+                if(tokenString != null && !tokenString.trim().isEmpty()) {
+                    token = tokenString.trim();
+                }
+            }
+
+            requestJSON.put("subjectToken", token);
 
             Editable etHostname = etHost.getText();
 
@@ -258,8 +272,6 @@ public class MainActivity extends AppCompatActivity {
                 // just hardcode it for now
                 requestJSON.put("subjectIP", "199.88.77.66");
                 requestJSON.put("actType", "REQ");
-                requestJSON.put("subjectToken", "bob");
-
 
                 JSONObject responseJSON = sendData(requestJSON);
 
@@ -288,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
 
                 requestJSON.put("actType", "GEO");
                 requestJSON.put("subjectIP", "99.99.99.99");
-                requestJSON.put("subjectToken", "bob");
 
                 JSONObject locationJSON = new JSONObject();
                 locationJSON.put("longitude", location.getLongitude() + "");
@@ -324,7 +335,6 @@ public class MainActivity extends AppCompatActivity {
 
             double connectTime = (connectEndTime.getTime() - connectStartTime.getTime()) / 1000.;
 
-            setStatusMessage(tvDetailMsg, "Connection ended after " + connectTime + " seconds");
             setStatusMessage(tvConnectMsg, "Disconnected");
         }
     }
