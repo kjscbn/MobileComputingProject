@@ -9,7 +9,7 @@
 ### END INIT INFO
 
 root=/home/steven/MobileComputingProject/JavaServer
-classpath=$root/org.json.jar:$root/src
+classpath=/usr/share/java/org.json.jar:$root/src
 
 RUNAS=steven
 PATH=/usr/bin
@@ -23,7 +23,7 @@ start() {
     return 1
   fi
   echo 'Starting service…' >&2
-  /usr/bin/java -cp $classpath workingserver.Server &> $LOGFILE
+  /usr/bin/java -cp $classpath servermultipleclients.Main > $LOGFILE
   echo 'Service started' >&2
 }
 

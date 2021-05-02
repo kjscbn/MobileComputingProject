@@ -20,7 +20,7 @@
     $ua  = $_SERVER['HTTP_USER_AGENT'];
 
     $host = "localhost";
-    $port = 4447;
+    $port = 7777;
 
     $sock = socket_create(AF_INET, SOCK_STREAM, 0);
     $rc = socket_connect($sock, $host, $port);
