@@ -135,23 +135,31 @@ public class ServerThread extends Thread {
 
           double distance = distance(curLat, curLon, oldLat, oldLon, 'M');
           double time = getTimeDifference(oldTime, getCurrentTimeStamp());
-          speed = calcSpeed(distance, time);
 
-          //Edits location value based on speed. Slower speed is more human like so higher location value.
-          if(speed >= 0 && speed <= 33) {
-            locationValue = 9;
-          }else if(speed >= 34 && speed <= 66) {
-            locationValue = 6;
-          }else if(speed >= 67 && speed < 100) {
-            locationValue = 3;
+          System.out.println("dist: " + distance + ", time:" + time);
+
+          // treat tiny distance as no movement (precision error)
+          if(distance > 0.0001) {
+            speed = calcSpeed(distance, time);
+
+            //Edits location value based on speed. Slower speed is more human like so higher location value.
+            if(speed >= 0 && speed <= 33) {
+              locationValue = 9;
+            }else if(speed >= 34 && speed <= 66) {
+              locationValue = 6;
+            }else if(speed >= 67 && speed < 100) {
+              locationValue = 3;
+            }else if(speed > 1000) {  // > 1000 means we are being gamed
+              locationValue = -10;
+            }
           }
-
-          editScore(m, locationValue);
-          score = JSONFunctions.getScore(m);
         }
         else { // no previous data - create a file to store the new data
           FileUtils.createFile(filename);
         }
+
+        editScore(m, locationValue);
+        score = JSONFunctions.getScore(m);
 
         // write score and location data
         FileUtils.writeToFile(filename, score + "," + latitude + "," + longitude + "," + accuracy + "," + getCurrentTimeStamp());
@@ -203,7 +211,14 @@ public class ServerThread extends Thread {
       System.out.println("Current Score: " + temp);
 
       // Temp value just to check score formula.
-      temp = temp + value * ((100 - temp) / 200);
+      temp = temp + value * ((100 - (Math.abs(temp))) / 200);
+
+      if(temp < -100) {
+        temp = -100;
+      }
+      else if(temp > 100) {
+        temp = 100;
+      }
 
       System.out.println("New Score: " + temp);
 
