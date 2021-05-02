@@ -17,8 +17,15 @@
   $ip  = $_SERVER['REMOTE_ADDR'];
   $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
   $ua  = $_SERVER['HTTP_USER_AGENT'];
+  $token  = $_SERVER['HTTP_SUBJECTTOKEN'];
 
   echo "<p>Your IP is $ip</p>";
+
+  if($token) {
+    echo "<p>You do not have an HH token set</p>";
+  }
+  echo "<p>Your HH token is $token</p>";
+
 
   $host = "localhost";
   $port = 4447;

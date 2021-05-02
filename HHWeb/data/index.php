@@ -13,8 +13,8 @@
 </head>
 <body>
 <?php
-  if(isset($_GET["subjectToken"])) {
-    $token = $_GET["subjectToken"];
+  if(isset($_SERVER["HTTP_SUBJECTTOKEN"])) {
+    $token = $_SERVER["HTTP_SUBJECTTOKEN"];
     $ip  = $_SERVER['REMOTE_ADDR'];
     $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $ua  = $_SERVER['HTTP_USER_AGENT'];
