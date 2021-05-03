@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width" />
 <style>
     body {
-        width: 35em;
-        margin: 0 auto;
+        max-width: 80em;
+        margin: 20 auto;
         font-family: Tahoma, Verdana, Arial, sans-serif;
     }
 </style>
@@ -18,14 +18,17 @@
   $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
   $ua  = $_SERVER['HTTP_USER_AGENT'];
 
-  echo "<p>Your IP is $ip</p>";
+  $welcomeImage = "neither.png";
+  $welcomeMessage = "We're not really sure what you are";
+
+  echo "<p>Your IP is $ip ";
 
   if(!isset($_SERVER["HTTP_SUBJECTTOKEN"])) {
-    echo "<p>You do not have an HH token set</p>";
+    echo "and do not have an HH token set</p>";
   }
   else {
     $token  = $_SERVER['HTTP_SUBJECTTOKEN'];
-    echo "<p>Your HH token is $token</p>";
+    echo "and your HH token is $token</p>";
 
     $host = "localhost";
     $port = 7777;
@@ -36,10 +39,12 @@
     if($rc) {
       // request JSON
       $req = "{";
-      $req .="\"subjectIP\": \"$ip\", \"actType\": \"WEB\", ";
-      $req .="\"URL\": \"$url\", \"userAgent\": \"$ua\"";
+      $req .="\"subjectIP\": \"$ip\", \"actType\": \"WEB\",";
+      $req .="\"actData\":{";
+      $req .="\"url\": \"$url\", \"userAgent\": \"$ua\"";
+      $req .="}";
       if(isset($token)) {
-        $req .= "\"subjectToken\":\"$token\", ";
+        $req .= ",\"subjectToken\":\"$token\"";
       }
       $req .= "}";
 
@@ -49,13 +54,24 @@
 
       socket_write($sock, $req, strlen($req));
 
-      echo "<br><br>HH Score Server Response:<br> <code>";
-
-      while ($out = socket_read($sock, 2048)) {
-        echo $out;
+      $resp = "";
+      while ("" != ($out = socket_read($sock, 2048))) {
+        $resp .= $out;
       }
 
+      echo "<br><br>HH Score Server Response:<br> <code>";
+      echo $resp;
       echo "</code>";
+
+      $data = json_decode($resp);
+
+      if($data->score < 0) :
+        $welcomeImage = "bot.png";
+        $welcomeMessage = "We're betting you're a bot!";
+      else :
+        $welcomeImage = "human.png";
+        $welcomeMessage = "We're hopeful that you are human!";
+      endif;
     }
     else {
       echo "Couldn't connect to HH server.";
@@ -63,10 +79,13 @@
   }
 ?>
 
+<div style="text-align:center"><img height=300px src="img/<?=$welcomeImage?>"></div>
+<h1 style="text-align:center"><?=$welcomeMessage?></h1>
+
 <p><a href="ads.apk">Download the Android Data Service</a></p>
 
 <p><a href="asc.apk">Download the Android Sample Client</a></p>
 
-<em>Please note:  you will need to disable android play protect in order to install these APK's</em>
+<em>Please note:  you may need to disable android play protect in order to install these APK's</em>
 </body>
 </html>
