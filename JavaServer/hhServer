@@ -18,12 +18,14 @@ PIDFILE=/var/run/hhServer.pid
 LOGFILE=/var/log/hhServer.log
 
 start() {
+  cd $root
   if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
     echo 'Service already running' >&2
     return 1
   fi
   echo 'Starting service…' >&2
-  /usr/bin/java -cp $classpath servermultipleclients.Main > $LOGFILE
+  /usr/bin/java -cp $classpath servermultipleclients.Main >> $LOGFILE 2>&1 &
+  echo $! > $PIDFILE;
   echo 'Service started' >&2
 }
 
@@ -33,7 +35,7 @@ stop() {
     return 1
   fi
   echo 'Stopping service…' >&2
-  pkill -P $(cat "$PIDFILE") && rm -f "$PIDFILE"
+  pkill -F $PIDFILE && rm -f "$PIDFILE"
   echo 'Service stopped' >&2
 }
 
