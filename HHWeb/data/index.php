@@ -9,6 +9,9 @@
       margin: 0 auto;
       font-family: Tahoma, Verdana, Arial, sans-serif;
     }
+    p {
+      font-size:24px
+    }
   </style>
 </head>
 <body>
