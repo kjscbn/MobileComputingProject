@@ -1,4 +1,4 @@
-package edu.umsl.cs5792.androidDataService;
+package edu.umsl.cs5792.sampleClientApp;
 
 import android.content.Context;
 

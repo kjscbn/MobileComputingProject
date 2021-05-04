@@ -1,4 +1,4 @@
-package edu.umsl.cs5792.androidDataService;
+package edu.umsl.cs5792.sampleClientApp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -96,7 +96,12 @@ public class MainActivity extends AppCompatActivity {
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         // webView.setScrollContainer(false);
-        extraHeaders.put("SUBJECTTOKEN", getSubjectToken());
+
+        String theToken = getSubjectToken();
+
+        if(theToken != "") {
+            extraHeaders.put("SUBJECTTOKEN", theToken);
+        }
 
         webView.loadUrl("http://www.hopefullyhuman.com/data", extraHeaders);
         // webView.loadUrl("http://www.hopefullyhuman.com/");
@@ -155,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getSubjectToken() {
         Editable etSubjectToken = etToken.getText();
-        String subjectToken = "DefaultToken";
+        String subjectToken = "";
 
         if(etSubjectToken != null) {
             String subjectTokenString = etSubjectToken.toString();
@@ -248,13 +253,17 @@ public class MainActivity extends AppCompatActivity {
 
                 // just hardcode it for now
                 requestJSON.put("actType", "REQ");
-                requestJSON.put("subjectToken", getSubjectToken());
+                String theToken = getSubjectToken();
 
-                JSONObject responseJSON = sendData(requestJSON);
+                if(theToken != "") {
+                    requestJSON.put("subjectToken", theToken);
 
-                double score = responseJSON.getDouble("score");
+                    JSONObject responseJSON = sendData(requestJSON);
 
-                setStatusMessage(tvConnectMsg, String.valueOf(score));
+                    double score = responseJSON.getDouble("score");
+
+                    setStatusMessage(tvConnectMsg, String.valueOf(score));
+                }
             }
             catch (JSONException e) {
                 Log.e(TAG, e.toString());
@@ -276,20 +285,26 @@ public class MainActivity extends AppCompatActivity {
             try {
                 JSONObject requestJSON = new JSONObject();
 
-                // just hardcode it for now
-                requestJSON.put("actType", "REQ");
-                requestJSON.put("subjectToken", getSubjectToken());
+                String theToken = getSubjectToken();
 
-                JSONObject responseJSON = sendData(requestJSON);
+                if(theToken != "") {
+                    // just hardcode it for now
+                    requestJSON.put("actType", "REQ");
+                    requestJSON.put("subjectToken", theToken);
 
-                double score = responseJSON.getDouble("score");
+                    JSONObject responseJSON = sendData(requestJSON);
 
-                setStatusMessage(tvConnectMsg, String.valueOf(score));
+                    double score = responseJSON.getDouble("score");
+                    setStatusMessage(tvConnectMsg, String.valueOf(score));
+                }
 
                 webView.post(new Runnable() {
                     @Override
                     public void run() {
-                        extraHeaders.put("SUBJECTTOKEN", getSubjectToken());
+                        String theToken = getSubjectToken();
+                        if(theToken != "") {
+                            extraHeaders.put("SUBJECTTOKEN", theToken);
+                        }
 
                         webView.loadUrl("http://www.hopefullyhuman.com/data", extraHeaders);
                     }
