@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "edu.umsl.cs5792.androidDataService"
+        applicationId "edu.umsl.cs5792.sampleClientApp"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
