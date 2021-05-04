@@ -23,11 +23,15 @@
 
   echo "<p>Your IP is $ip ";
 
-  if(!isset($_SERVER["HTTP_SUBJECTTOKEN"])) {
-    echo "and do not have an HH token set</p>";
-  }
-  else {
+
+  if(isset($_SERVER["HTTP_SUBJECTTOKEN"])) {
     $token  = $_SERVER['HTTP_SUBJECTTOKEN'];
+  }
+  elseif(isset($_GET["subjectToken"])) {
+    $token  = $_GET["subjectToken"];
+  }
+
+  if(isset($token)) {
     echo "and your HH token is $token</p>";
 
     $host = "localhost";
@@ -76,6 +80,9 @@
     else {
       echo "Couldn't connect to HH server.";
     }
+  }
+  else {
+    echo "and do not have an HH token set</p>";
   }
 ?>
 
