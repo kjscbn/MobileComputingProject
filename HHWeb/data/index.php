@@ -9,6 +9,9 @@
       margin: 0 auto;
       font-family: Tahoma, Verdana, Arial, sans-serif;
     }
+    p {
+      font-size:24px
+    }
   </style>
 </head>
 <body>
@@ -33,7 +36,7 @@
       socket_write($sock, $req, strlen($req));
 
       $resp = "";
-      while ($chunk = socket_read($sock, 2048)) {
+      while ("" != ($chunk = socket_read($sock, 2048))) {
         $resp .= $chunk;
       }
 
@@ -44,15 +47,17 @@
       echo "Sorry, couldn't connect to HH server.";
     }
   }
-  else {
-    echo "Sorry, you need a token to retrieve data.";
-  }
 ?>
 
-<?php if($score >= 0) : ?>
-<h1>Your good news for today!</h1>
+<?php if(!isset($score)) : ?>
+<h1>No news for you!</h1>
 
-<p>This is some great news that you didn't know about until you read it just now!
+<p>You have to have a token if you want to see the latest news</p>
+
+<?php elseif($score >= 0) : ?>
+<h1>Here's some good news for you today!</h1>
+
+<p>This is some great news that you didn't know about until you read it just now!</p>
 <?php else : ?>
 <h1>Bad News!</h1>
 
