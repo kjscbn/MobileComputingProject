@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "edu.umsl.cs5792.androidDataService",
+  "applicationId": "edu.umsl.cs5792.sampleClientApp",
   "variantName": "processReleaseResources",
   "elements": [
     {
