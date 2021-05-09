@@ -119,9 +119,7 @@ public class ServerThread extends Thread {
         longitude = JSONFunctions.getLongitude(data);
         accuracy = JSONFunctions.getAccuracy(data);
 
-        System.out.println("LATITUDE: " + latitude);
-        System.out.println("LONGITUDE: " + longitude);
-        System.out.println("ACCURACY: " + accuracy);
+        System.out.println("New location: " + latitude + " " + longitude + " " + accuracy + "(lat, long, accuracy)");
         // Gets subject token and score from client message, calcs new score, and
         // creates response
 
@@ -136,7 +134,7 @@ public class ServerThread extends Thread {
           double distance = distance(curLat, curLon, oldLat, oldLon, 'M');
           double time = getTimeDifference(oldTime, getCurrentTimeStamp());
 
-          System.out.println("dist: " + distance + ", time:" + time);
+          System.out.println("dist: " + distance + " mi, time:" + time + " s");
 
           // treat tiny distance as no movement (precision error)
           if(distance > 0.0001) {
@@ -153,6 +151,7 @@ public class ServerThread extends Thread {
               locationValue = -10;
             }
           }
+          System.out.println("speed: " + speed + " mph, lVal:" + locationValue);
         }
         else { // no previous data - create a file to store the new data
           FileUtils.createFile(filename);
@@ -184,7 +183,6 @@ public class ServerThread extends Thread {
     }
 
     m = JSONFunctions.createReturnMessage(m, subjectToken, score);
-    System.out.println("returning: " + m);
   }
 
   // Fixes JSONObject if score is missing. Adds one as a default score
@@ -285,8 +283,12 @@ public class ServerThread extends Thread {
       e.printStackTrace();
     }
 
+    if(count > 0) {
+      System.out.println("Last score: " + oldLocationData[0]);
+    }
+
     System.out.print("Last location: ");
-    for(int i = 0; i < count; i++) {
+    for(int i = 1; i < count; i++) {
       System.out.print(oldLocationData[i] + " ");
     }
     System.out.println();
