@@ -251,9 +251,9 @@ public class ServerThread extends Thread {
     return (dist);
   }
 
-  //Calcs speed
+  //Calcs speed in mph hours (given distance in miles, time in seconds)
   private double calcSpeed(double distance, double time) {
-    double speed = distance / time;
+    double speed = distance / (time / 3600);
     return speed;
   }
 
@@ -300,18 +300,18 @@ public class ServerThread extends Thread {
   //Calculates difference between two times
   public static double getTimeDifference(String start_date, String end_date) {
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
-    long difference_in_hours = 0;
+    long difference_in_seconds = 0;
     try {
       Date d1 = sdf.parse(start_date);
       Date d2 = sdf.parse(end_date);
 
       long difference_In_Time = d2.getTime() - d1.getTime();
 
-      difference_in_hours = (difference_In_Time / (1000 * 60)) % 24;
+      difference_in_seconds = difference_In_Time / 1000;
     }catch(ParseException e) {
       e.printStackTrace();
     }
 
-    return difference_in_hours;
+    return difference_in_seconds;
   }
 }
