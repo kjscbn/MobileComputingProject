@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sample Client App</string>
+    <string name="app_name">Good News Reader</string>
     <string name="placeholder_host">Remote host</string>
     <string name="placeholder_port">Port</string>
     <string name="button_get_score">Get My Score</string>
